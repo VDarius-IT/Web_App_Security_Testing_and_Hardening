@@ -57,8 +57,67 @@ Die Architektur ist auf automatisierte Ausfallsicherheit ausgelegt. Die Hauptkom
 3.  **Automatisierter Failover:** Der CloudWatch-Alarm löst eine Lambda-Funktion aus. Diese Funktion löst automatisch die Zuordnung der Elastic IP von der ausgefallenen primären Instanz und ordnet sie der **Standby-EC2-Instanz** neu zu.
 4.  **Dienstwiederherstellung:** Die Standby-Instanz übernimmt die Funktion des neuen primären Gateways. Da die Elastic IP verschoben wird, können Benutzer sich über denselben DNS-Endpunkt erneut verbinden, ohne ihre Konfiguration ändern zu müssen. Der Failover ist in der Regel in weniger als 90 Sekunden abgeschlossen.
 
-![Ein einfaches Diagramm, das einen Benutzer zeigt, der sich über Route 53 mit einer primären EC2-Instanz verbindet, wobei ein CloudWatch-Alarm diese überwacht und eine Lambda-Funktion bereitsteht, um die Elastic IP auf eine Standby-EC2-Instanz in einer anderen Availability Zone zu leiten.](https://place-hold.it/700x300?text=Architekturdiagramm)
-*(Ein detaillierteres Diagramm befindet sich im Ordner `/docs`)*
+```mermaid
+graph TD
+    subgraph "Benutzergerät"
+        U[VPN-Client]
+    end
+
+    subgraph "AWS Cloud"
+        R53[Route 53 DNS-Endpunkt]
+
+        subgraph "Verfügbarkeitszone A"
+            subgraph "Primäres Gateway"
+                style Primary fill:#d4edda,stroke:#155724
+                P_EC2[EC2-Instanz: VPN-Server]
+                EIP[Elastische IP-Adresse]
+            end
+        end
+
+        subgraph "Verfügbarkeitszone B"
+            subgraph "Standby-Gateway"
+                 style Standby fill:#f8d7da,stroke:#721c24
+                 S_EC2[EC2-Instanz: VPN-Server]
+            end
+        end
+
+        subgraph "Automatisierte Failover-Logik"
+            CW[CloudWatch-Alarm: Überwacht Primär-Instanz]
+            L[Lambda-Funktion: Ordnet EIP neu zu]
+        end
+
+        VPC[VPC-Ressourcen <br/> z.B. Private Subnetze]
+    end
+
+    %% --- Verbindungen und Abläufe ---
+
+    %% Normalbetrieb (Steady State)
+    U -- "1. Verbindung über vpn.ihrefirma.de" --> R53
+    R53 -- "2. Löst auf Elastische IP auf" --> EIP
+    EIP -- "3. Mit Primär-Instanz verbunden" --> P_EC2
+    P_EC2 -- "4. Stellt sicheren Zugriff bereit" --> VPC
+
+    %% Failover-Prozess
+    CW -- "1. Erkennt Ausfall der Primär-Instanz" --> L
+    L -- "2. Trennt EIP von Primär-Instanz" --> EIP
+    L -- "3. Verbindet EIP mit Standby-Instanz" --> S_EC2
+    S_EC2 -- "Wird zum neuen Primär-Gateway" --> VPC
+
+    %% --- Link-Stile ---
+    %% Stile werden in der Reihenfolge der Links oben angewendet.
+    
+    %% Links Normalbetrieb (0-3): Grün, Durchgezogen
+    linkStyle 0 stroke-width:2px,fill:none,stroke:green;
+    linkStyle 1 stroke-width:2px,fill:none,stroke:green;
+    linkStyle 2 stroke-width:2px,fill:none,stroke:green;
+    linkStyle 3 stroke-width:2px,fill:none,stroke:green;
+
+    %% Failover-Links (4-7): Gestrichelt, mit passenden Farben
+    linkStyle 4 stroke-width:2px,fill:none,stroke:red,stroke-dasharray: 5 5;
+    linkStyle 5 stroke-width:2px,fill:none,stroke:orange,stroke-dasharray: 5 5;
+    linkStyle 6 stroke-width:2px,fill:none,stroke:orange,stroke-dasharray: 5 5;
+    linkStyle 7 stroke-width:2px,fill:none,stroke:green,stroke-dasharray: 5 5;
+```
 
 ---
 
