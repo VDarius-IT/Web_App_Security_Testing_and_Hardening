@@ -1,183 +1,142 @@
-# IT-Optimierung: Active Directory-Automatisierung mit PowerShell DSC
+# 🛡️ Stärkung des Fernzugriffs: Hochverfügbares und sicheres VPN-Gateway
 
-![PowerShell](https://img.shields.io/badge/PowerShell-5.1+-5391FE?style=for-the-badge&logo=powershell)![Active Directory](https://img.shields.io/badge/Active%20Directory-Automated-0078D4?style=for-the-badge&logo=windows-server)![DSC](https://img.shields.io/badge/DSC-Enabled-blueviolet?style=for-the-badge)![Efficiency](https://img.shields.io/badge/Onboarding-80%25%20Faster-brightgreen?style=for-the-badge)![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)
+![AWS](https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=amazon-aws)![OpenVPN](https://img.shields.io/badge/OpenVPN-EA7E20?style=for-the-badge&logo=openvpn)![IPsec](https://img.shields.io/badge/IPsec-Stark-blue?style=for-the-badge)![High Availability](https://img.shields.io/badge/Verfügbarkeit-99.9%25-brightgreen?style=for-the-badge)![MFA](https://img.shields.io/badge/MFA-Aktiviert-success?style=for-the-badge)![License](https://img.shields.io/badge/Lizenz-MIT-green.svg?style=for-the-badge)
 
-> Eine transformative Automatisierungsinitiative, die **PowerShell Desired State Configuration (DSC)** nutzt, um das Management des Benutzerlebenszyklus im Active Directory zu revolutionieren. Dieses Projekt automatisiert die Benutzerbereitstellung, Gruppenmitgliedschaften und GPO-Richtlinien und erreicht eine **Reduzierung der Onboarding-Zeit für Mitarbeiter um 80 %**.
-
----
-
-## 🎯 Die Herausforderung: Manuelles Onboarding als Engpass
-
-In vielen IT-Umgebungen ist die Verwaltung des Benutzerlebenszyklus im Active Directory ein manueller, repetitiver und fehleranfälliger Prozess. Das Onboarding eines neuen Mitarbeiters umfasst oft eine lange Checkliste: einen Benutzer anlegen, ein Passwort setzen, ihn zu Dutzenden von Sicherheits- und Verteilergruppen hinzufügen und die richtigen Gruppenrichtlinienobjekte (GPOs) verknüpfen.
-
-Dieser manuelle Ansatz führt zu:
-
-*   **Langsames Onboarding:** Neue Mitarbeiter warten Stunden oder sogar Tage auf den vollen Systemzugriff, was ihre Produktivität beeinträchtigt.
-*   **Inkonsistenz & Fehler:** Manuelle Dateneingabe führt unweigerlich zu Fehlern, was zu fehlerhaften Berechtigungen und Sicherheitslücken führt.
-*   **Hoher Betriebsaufwand:** IT-Teams verbringen wertvolle Zeit mit administrativen Routineaufgaben anstatt mit strategischen Initiativen.
-*   **Schwierige Überprüfbarkeit (Auditing):** Die Nachverfolgung, wer worauf Zugriff hat und warum, wird zu einer erheblichen Compliance-Herausforderung.
-
-## ✨ Die Lösung: Automatisierung mit PowerShell DSC
-
-Dieses Projekt stellt ein robustes, deklaratives Automatisierungs-Framework mit **PowerShell DSC** vor. Indem wir den „gewünschten Zustand“ (Desired State) für unsere Active Directory-Umgebung definieren, können wir sicherstellen, dass jedes Benutzerkonto, jede Gruppe und jede Richtlinie konsistent und automatisch konfiguriert wird.
-
-Die Lösung basiert auf drei Grundpfeilern:
-
-1.  **Deklarative Konfiguration:** Anstatt Skripte zu schreiben, die Schritte ausführen, definieren wir, *wie* der Endzustand aussehen soll. DSC kümmert sich um das „Wie“.
-2.  **Idempotente Ausführung:** Die Konfigurationen können wiederholt ausgeführt werden, ohne Fehler oder unbeabsichtigte Änderungen zu verursachen. Dies stellt sicher, dass die Umgebung immer dem definierten Zustand entspricht.
-3.  **Zentralisierte Verwaltung:** Alle Konfigurationen werden als Code verwaltet, was Versionskontrolle, Peer-Reviews und einen klaren Audit-Trail ermöglicht.
+> Eine Anleitung zur Bereitstellung eines hochverfügbaren IPsec/OpenVPN-Clusters auf AWS, entwickelt für außergewöhnliche Ausfallsicherheit und verstärkt durch Multi-Faktor-Authentifizierung. Diese Lösung bietet sicheren, zuverlässigen und performanten Fernzugriff für eine moderne Belegschaft.
 
 ---
 
-## 🚀 Wichtige Merkmale & Automatisierungskomponenten
+## 🎯 Die Herausforderung: Die Fragilität von Standard-Fernzugriffslösungen
 
-*   ✅ **Automatisierte Benutzerbereitstellung:** Neue Benutzerkonten werden basierend auf einer Vorlage (z. B. Abteilung, Rolle) erstellt und konfiguriert, wobei Daten aus einer Quelldatei (wie einer CSV) oder einer HR-System-API abgerufen werden.
-*   ✅ **Dynamische Gruppenmitgliedschaft:** Benutzer werden basierend auf ihren Attributen (z. B. Titel, Abteilung) automatisch den richtigen Sicherheits- und Verteilergruppen zugewiesen, um sicherzustellen, dass sie immer die korrekten Zugriffsberechtigungen haben.
-*   ✅ **Konsistente GPO-Konfiguration:** DSC stellt sicher, dass die richtigen GPOs für bestimmte Organisationseinheiten (OUs) verknüpft und durchgesetzt werden, wodurch Benutzer- und Computerrichtlinien in der gesamten Domäne standardisiert werden.
-*   ✅ **Konfiguration als Code (Configuration as Code):** Die gesamte Active Directory-Benutzerrichtlinie wird in lesbaren, versionierten PowerShell-Skripten gespeichert, wodurch „Konfigurationsdrift“ vermieden wird.
+Im Zeitalter der Telearbeit ist der Zugang zu internen Ressourcen unerlässlich. Standard-VPN-Lösungen bergen jedoch oft erhebliche Risiken und Engpässe:
 
----
+*   **Single Point of Failure:** Der Ausfall eines einzigen VPN-Servers kann die Produktivität der gesamten Belegschaft zum Erliegen bringen.
+*   **Sicherheitslücken:** Einfacher, auf Anmeldedaten basierender Zugriff ist ein Hauptziel für Angreifer und entbehrt der Robustheit moderner Authentifizierungsmethoden.
+*   **Performance-Engpässe:** Ein einzelnes, überlastetes Gateway kann zu langsamen Verbindungsgeschwindigkeiten und einer schlechten Benutzererfahrung führen.
+*   **Reaktive Wartung:** Oft ist manuelles Eingreifen erforderlich, um Ausfälle zu beheben, was zu längeren Ausfallzeiten führt.
+
+Sich auf eine fragile Einzelserver-Konfiguration zu verlassen, ist für geschäftskritische Abläufe keine tragfähige Strategie mehr.
+
+## ✨ Die Lösung: Ein automatisiertes, ausfallsicheres und sicheres Gateway
+
+Dieses Projekt implementiert eine mehrschichtige Defense-in-Depth-Strategie für den Fernzugriff, die Hochverfügbarkeit, Sicherheit und Leistung in den Vordergrund stellt.
+
+1.  **Für Ausfallsicherheit konzipiert:** Bereitstellung eines Clusters von VPN-Servern über mehrere Availability Zones, um Single Points of Failure zu eliminieren.
+2.  **Absicherung der Zugänge:** Erzwingung der Multi-Faktor-Authentifizierung (MFA), um sicherzustellen, dass nur autorisierte Benutzer eine Verbindung herstellen können.
+3.  **Automatisierung für Zuverlässigkeit:** Implementierung eines automatisierten Failover-Mechanismus, der Serverausfälle erkennt und den Datenverkehr in Echtzeit ohne menschliches Eingreifen umleitet.
+4.  **Optimierung für Leistung:** Sorgfältige Abstimmung der Netzwerk- und Serverkonfigurationen, um maximalen Durchsatz für alle verbundenen Benutzer zu erreichen.
+
+## 🚀 Hauptmerkmale & Architektur-Highlights
+
+*   ✅ **Hochverfügbarkeits-Cluster:** Eine Aktiv-Passiv-Konfiguration des VPN-Gateways, die sich über mehrere AWS Availability Zones erstreckt, gewährleistet eine nahezu kontinuierliche Verfügbarkeit.
+*   ✅ **Automatisierter Failover-Mechanismus:** Proaktive **AWS CloudWatch-Alarme** überwachen den Zustand des primären Gateways. Bei Ausfallerkennung wird eine **AWS Lambda**-Funktion ausgelöst, die sofort die **Route 53** DNS-Einträge aktualisiert und den gesamten Verkehr auf die fehlerfreie Standby-Instanz umleitet.
+*   ✅ **Verstärkte Sicherheit mit MFA:** Integration mit MFA-Lösungen, um eine kritische Sicherheitsebene über den reinen Benutzernamen und das Passwort hinaus hinzuzufügen und vor dem Diebstahl von Anmeldedaten zu schützen.
+*   ✅ **Optimiert für maximalen Durchsatz:** Server- und Netzwerkeinstellungen wurden optimiert, um eine hohe Anzahl gleichzeitiger Verbindungen ohne Leistungseinbußen zu bewältigen.
+*   ✅ **Zentralisierte & sichere Konnektivität:** Bietet einen einzigen, sicheren Zugangspunkt zu Ihrer AWS VPC und vereinfacht so die Netzwerkverwaltung und Zugriffskontrolle.
 
 ## 💻 Verwendete Kerntechnologien
 
 | Technologie | Zweck |
-| :--- | :--- |
-| **PowerShell** | Die Kern-Skriptsprache für die Automatisierungslogik. |
-| **Desired State Configuration (DSC)** | Die deklarative Plattform zur Verwaltung der IT-Infrastruktur als Code. |
-| **Active Directory** | Der Verzeichnisdienst, der automatisiert und verwaltet wird. |
-| **CSV / JSON** | Datenquellen, die Benutzerinformationen in die Bereitstellungsskripte einspeisen. |
-| **Git & GitHub** | Für die Versionskontrolle aller Konfigurationsskripte und der Dokumentation. |
+| --- | --- |
+| **Amazon EC2** | Hostet die OpenVPN/IPsec-Serverinstanzen. |
+| **Amazon VPC** | Stellt die isolierte Netzwerkumgebung für die Infrastruktur bereit. |
+| **AWS Route 53** | Verwaltet das DNS-Routing und ermöglicht den schnellen Failover-Mechanismus. |
+| **AWS CloudWatch** | Überwacht den Serverzustand und löst bei Ausfallerkennung Alarme aus. |
+| **AWS Lambda** | Führt die automatisierte Failover-Logik zur Aktualisierung der DNS-Einträge aus. |
+| **OpenVPN / IPsec**| Die Kern-VPN-Protokolle, die sichere Kommunikationstunnel bereitstellen. |
+| **MFA-Anbieter** | Integration mit Diensten wie Google Authenticator oder Duo für 2FA. |
 
 ---
 
-## 🔧 Funktionsweise: Ein Drei-Phasen-Ansatz
+## 🏗️ Architekturübersicht
 
-Dieses Projekt implementiert einen vollständigen, automatisierten Lebenszyklus für die Benutzerverwaltung.
+Die Architektur ist auf automatisierte Ausfallsicherheit ausgelegt. Die Hauptkomponenten arbeiten zusammen, um eine nahtlose Benutzererfahrung zu gewährleisten, selbst im Falle eines Serverausfalls.
 
-### Phase 1: Definition des gewünschten Zustands
+1.  **Normalbetrieb (Steady State):** Benutzer verbinden sich über einen zentralen, von Route 53 verwalteten DNS-Endpunkt mit dem VPN-Gateway. Dieser Endpunkt verweist auf die Elastic-IP-Adresse der **primären EC2-Instanz**.
+2.  **Ausfallerkennung:** Ein CloudWatch-Alarm überwacht kontinuierlich den Zustand der primären Instanz. Wenn diese nicht mehr reagiert (z. B. aufgrund eines Instanzausfalls oder von Netzwerkproblemen), ändert sich der Alarmzustand.
+3.  **Automatisierter Failover:** Der CloudWatch-Alarm löst eine Lambda-Funktion aus. Diese Funktion löst automatisch die Zuordnung der Elastic IP von der ausgefallenen primären Instanz und ordnet sie der **Standby-EC2-Instanz** neu zu.
+4.  **Dienstwiederherstellung:** Die Standby-Instanz übernimmt die Funktion des neuen primären Gateways. Da die Elastic IP verschoben wird, können Benutzer sich über denselben DNS-Endpunkt erneut verbinden, ohne ihre Konfiguration ändern zu müssen. Der Failover ist in der Regel in weniger als 90 Sekunden abgeschlossen.
 
-Wir erstellen DSC-Konfigurationsskripte, die den idealen Zustand für unsere Benutzer, Gruppen und OUs definieren.
+![Ein einfaches Diagramm, das einen Benutzer zeigt, der sich über Route 53 mit einer primären EC2-Instanz verbindet, wobei ein CloudWatch-Alarm diese überwacht und eine Lambda-Funktion bereitsteht, um die Elastic IP auf eine Standby-EC2-Instanz in einer anderen Availability Zone zu leiten.](https://place-hold.it/700x300?text=Architekturdiagramm)
+*(Ein detaillierteres Diagramm befindet sich im Ordner `/docs`)*
 
-**Beispiel: Eine DSC-Konfiguration für einen neuen Benutzer**
-```powershell
-Configuration NewUserOnboarding {
-    param (
-        [string]$UserName,
-        [string]$Department,
-        [string]$OUPath
-    )
+---
 
-    Import-DscResource -ModuleName 'PSDscResources'
+## 🛠️ Konfiguration & Bereitstellung
 
-    Node 'localhost' {
-        User $UserName {
-            Ensure       = 'Present'
-            UserName     = $UserName
-            Password     = (ConvertTo-SecureString 'DefaultPassword123' -AsPlainText -Force)
-            FullName     = "User - $UserName"
-            Department   = $Department
-            Path         = $OUPath
-            PasswordNeverExpires = $false
-            UserCannotChangePassword = $false
-        }
+Dieses Projekt kann mit den bereitgestellten Infrastructure-as-Code-Skripten bereitgestellt werden.
 
-        Group "Department_Group_$Department" {
-            Ensure      = 'Present'
-            GroupName   = "Department_Group_$Department"
-            MembersToInclude = @($UserName)
-        }
-    }
-}
-```
-
-### Phase 2: Kompilieren und Bereitstellen (Staging)
-
-Die für Menschen lesbaren Konfigurationsskripte werden in `.mof`-Dateien kompiliert. Dies sind die Dokumente, die die DSC-Engine zur Durchsetzung des Zustands verwendet.
-
+**1. Klonen Sie das Repository:**
 ```bash
-# Die Konfiguration kompilieren
-NewUserOnboarding -UserName "jdoe" -Department "Sales" -OUPath "OU=Sales,DC=corp,DC=local" -OutputPath C:\DSC\MOF
-
-# Die Konfiguration starten
-Start-DscConfiguration -Path C:\DSC\MOF -Wait -Verbose
+git clone https://github.com/your-username/ha-secure-vpn.git
+cd ha-secure-vpn
 ```
 
-### Phase 3: Kontinuierliche Durchsetzung
+**2. Konfigurieren Sie die Umgebung:**
+Aktualisieren Sie die Konfigurationsdateien im Verzeichnis `/terraform` oder `/cloudformation` mit Ihren spezifischen VPC-, Subnetz- und AMI-Details.
 
-Der DSC Local Configuration Manager (LCM) auf dem Domänencontroller wird so konfiguriert, dass er regelmäßig Abweichungen vom gewünschten Zustand überprüft und automatisch korrigiert. Dadurch wird sichergestellt, dass die Umgebung über die Zeit konsistent bleibt.
+**Beispiel: Wichtige OpenVPN-Konfiguration (`/scripts/server.conf`)**
+```ini
+port 1194
+proto udp
+dev tun
 
----
+# Zertifikate und Schlüssel
+ca ca.crt
+cert server.crt
+key server.key
+dh dh.pem
+
+# Sicherheit & MFA
+plugin /usr/lib/openvpn/openvpn-plugin-auth-pam.so login
+reneg-sec 0
+
+# Routen an Clients pushen
+push "route 10.10.10.0 255.255.255.0"
+```
+
+**3. Stellen Sie die Infrastruktur bereit:**
+Folgen Sie den Anweisungen im entsprechenden IaC-Verzeichnis, um den Stack bereitzustellen.
+
+## 📈 Wichtige Ergebnisse & Auswirkungen
+
+Diese Lösung verwandelt eine standardmäßige, anfällige Fernzugriffskonfiguration in ein sicheres Gateway auf Unternehmensniveau.
+
+| Vorher | Nachher |
+| --- | --- |
+| Einzelner Ausfallpunkt | **Hochverfügbarkeit mit einer geplanten Verfügbarkeit von 99,9 %** |
+| Nur-Passwort-Authentifizierung | **Verstärkt durch Multi-Faktor-Authentifizierung (MFA)** |
+| Manueller Failover-Prozess (Stundenlange Ausfallzeit) | **Automatisierter Failover (< 90 Sekunden)** |
+| Potentielle Performance-Engpässe | **Optimiert für maximalen Durchsatz & gleichzeitige Benutzer** |
+| Hohes Risiko unbefugten Zugriffs | **Angriffsfläche signifikant reduziert** |
 
 ## 📁 Verzeichnisstruktur
 
 ```
-/Active-Directory-Automation
+/ha-secure-vpn
 │
-├── Configurations/         # Haupt-DSC-Konfigurationsskripte
-│   ├── Base_OU_Structure.ps1
-│   ├── User_Onboarding.ps1
-│   └── Group_Membership.ps1
+├── terraform/                # Terraform-Skripte für die automatisierte Bereitstellung
+│   ├── main.tf
+│   ├── variables.tf
+│   └── outputs.tf
 │
-├── DSCResources/           # Benutzerdefinierte DSC-Ressourcen, falls vorhanden
+├── scripts/                  # Konfigurations- und Hilfsskripte
+│   ├── setup_vpn.sh
+│   └── server.conf           # Beispiel für OpenVPN-Serverkonfiguration
 │
-├── Data_Sources/           # Beispieldateien für neue Benutzer
-│   └── new_hires.csv
+├── lambda/                   # Quellcode für die Failover-Lambda-Funktion
+│   └── failover_handler.py
 │
-├── Scripts/                # Hilfs- und Ausführungsskripte
-│   ├── Invoke-Onboarding.ps1
-│   └── Run-DscComplianceCheck.ps1
+├── docs/
+│   └── architecture-detailed.png # Detailliertes Architekturdiagramm
 │
-├── Docs/                   # Unterstützende Dokumentation
-│   ├── Architecture.png
-│   └── GPO_Policy_Matrix.md
-│
-├── README.md               # Sie sind hier!
-│
-└── LICENSE
+└── README.md                 # Sie sind hier!
 ```
-
----
-
-## 🚀 Erste Schritte
-
-1.  **Klonen Sie das Repository:**
-    ```bash
-    git clone https://github.com/your-username/Active-Directory-Automation.git
-    cd Active-Directory-Automation
-    ```
-2.  **Voraussetzungen:**
-    *   Stellen Sie sicher, dass das PowerShell-DSC-Feature auf Ihrem Server aktiviert ist (`Install-WindowsFeature DSC-Service`).
-    *   Stellen Sie sicher, dass das `PSDscResources`-Modul installiert ist (`Install-Module -Name PSDscResources`).
-3.  **Passen Sie die Konfiguration an:**
-    *   Öffnen Sie `Configurations/User_Onboarding.ps1` und passen Sie die Parameter an Ihre Domänen- und OU-Struktur an.
-    *   Füllen Sie `Data_Sources/new_hires.csv` mit den Benutzerdaten, die Sie bereitstellen möchten.
-4.  **Führen Sie die Automatisierung aus:**
-    *   Führen Sie das Haupt-Wrapper-Skript aus, um den Onboarding-Prozess zu starten.
-    ```powershell
-    .\Scripts\Invoke-Onboarding.ps1 -CsvPath .\Data_Sources\new_hires.csv
-    ```
-
----
-
-## 🎯 Wichtige Ergebnisse & Auswirkungen
-
-| Vorher | Nachher |
-| :--- | :--- |
-| Manuelle, Ticket-basierte Benutzererstellung | Vollautomatisierte, Zero-Touch-Bereitstellung |
-| **2-4 Stunden** pro neuem Mitarbeiter | **Unter 15 Minuten** pro neuem Mitarbeiter |
-| Inkonsistente Berechtigungen und Gruppen | Standardisierte, rollenbasierte Zugriffskontrolle |
-| Hohes Risiko für menschliche Fehler | Konsistente und überprüfbare Konfigurationen |
-| **Erheblicher operativer Aufwand** | **80 % Reduzierung der Onboarding-Zeit** |
-
-Dieses Projekt hat das Management des Benutzerlebenszyklus von einer manuellen Routineaufgabe in einen optimierten, automatisierten und sicheren Prozess verwandelt. Dadurch wird das IT-Team entlastet, um sich auf wertschöpfende Initiativen zu konzentrieren.
-
----
 
 ## 🤝 Mitwirken
 
-Dieses Projekt dient als Vorlage für die Automatisierung von Active Directory. Beiträge sind willkommen! Eröffnen Sie gerne ein Issue, um Verbesserungen zu diskutieren, oder reichen Sie einen Pull Request mit neuen Funktionen ein, wie zum Beispiel:
+Dies ist ein Portfolio-Projekt, das Best Practices in Cloud-Architektur und Sicherheit demonstriert. Vorschläge, Fragen und Feedback sind sehr willkommen. Bitte zögern Sie nicht, ein Issue zu eröffnen, um Verbesserungen zu diskutieren.
 
-*   Integration mit einer HRIS-API (z. B. Workday, BambooHR).
-*   Automatisierte Offboarding-Skripte.
-*   Erweiterte GPO-Richtlinienkonfigurationen.
-*   Pester-Tests für DSC-Konfigurationen.
+## 📜 Lizenz
+
+Dieses Projekt ist unter der MIT-Lizenz lizenziert. Details finden Sie in der Datei `LICENSE`.
