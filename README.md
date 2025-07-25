@@ -57,8 +57,63 @@ The architecture is designed for automated resilience. The primary components wo
 3.  **Automated Failover:** The CloudWatch alarm triggers a Lambda function. This function automatically disassociates the Elastic IP from the failed primary instance and re-associates it with the **Standby EC2 instance**.
 4.  **Service Restoration:** The Standby instance takes over as the new primary gateway. Because the Elastic IP moves, users can reconnect through the same DNS endpoint without needing to change their configuration. Failover is typically completed in under 90 seconds.
 
-![A simple diagram showing a user connecting via Route 53 to a Primary EC2 instance, with a CloudWatch alarm monitoring it and a Lambda function ready to point the Elastic IP to a Standby EC2 instance in another availability zone.](https://place-hold.it/700x300?text=Architecture%20Diagram)
-*(A more detailed diagram can be found in the `/docs` folder)*
+```mermaid
+graph TD
+    subgraph "User's Device"
+        U[VPN Client]
+    end
+
+    subgraph "AWS Cloud"
+        R53[Route 53 DNS Endpoint]
+
+        subgraph "Availability Zone A"
+            subgraph "Primary Gateway"
+                style Primary fill:#d4edda,stroke:#155724
+                P_EC2[EC2 Instance: VPN Server]
+                EIP[Elastic IP Address]
+            end
+        end
+
+        subgraph "Availability Zone B"
+            subgraph "Standby Gateway"
+                 style Standby fill:#f8d7da,stroke:#721c24
+                 S_EC2[EC2 Instance: VPN Server]
+            end
+        end
+
+        subgraph "Automated Failover Logic"
+            CW[CloudWatch Alarm: Monitor Primary]
+            L[Lambda Function: Re-associate EIP]
+        end
+
+        VPC[VPC Resources <br/> e.g., Private Subnets]
+    end
+
+    %% --- Connections and Flows ---
+
+    %% Steady State Flow
+    U -- "1. Connects via vpn.yourcompany.com" --> R53
+    R53 -- "2. Resolves to Elastic IP" --> EIP
+    EIP -- "3. Associated with Primary" --> P_EC2
+    P_EC2 -- "4. Provides Secure Access" --> VPC
+
+    %% Failover Process
+    CW -- "1. Detects Primary EC2 Failure" ==> L
+    L -- "2. Disassociates EIP from Primary" --> EIP
+    L -- "3. Associates EIP with Standby" --> S_EC2
+    S_EC2 -- "Becomes the new Primary"--> VPC
+
+    %% Link Styles
+    linkStyle 0 stroke-width:2px,fill:none,stroke:green;
+    linkStyle 1 stroke-width:2px,fill:none,stroke:green;
+    linkStyle 2 stroke-width:2px,fill:none,stroke:green;
+    linkStyle 3 stroke-width:2px,fill:none,stroke:green;
+
+    linkStyle 4 stroke-width:2px,fill:none,stroke:red,stroke-dasharray: 5 5;
+    linkStyle 5 stroke-width:2px,fill:none,stroke:orange,stroke-dasharray: 5 5;
+    linkStyle 6 stroke-width:2px,fill:none,stroke:orange,stroke-dasharray: 5 5;
+    linkStyle 7 stroke-width:2px,fill:none,stroke:green,stroke-dasharray: 5 5;
+```
 
 ---
 
