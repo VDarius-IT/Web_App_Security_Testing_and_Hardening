@@ -90,16 +90,16 @@ graph TD
     %% --- Connections and Flows ---
 
     %% Steady State Flow
-    U -- "1. Connects via vpn.yourcompany.com" --> R53
-    R53 -- "2. Resolves to Elastic IP" --> EIP
-    EIP -- "3. Associated with Primary" --> P_EC2
-    P_EC2 -- "4. Provides Secure Access" --> VPC
+    U --> R53
+    R53 --> EIP
+    EIP --> P_EC2
+    P_EC2  --> VPC
 
     %% Failover Process
-    CW -- "1. Detects Primary EC2 Failure" --> L
-    L -- "2. Disassociates EIP from Primary" --> EIP
-    L -- "3. Associates EIP with Standby" --> S_EC2
-    S_EC2 -- "Becomes the new Primary"--> VPC
+    CW  --> L
+    L  --> EIP
+    L  --> S_EC2
+    S_EC2 --> VPC
 ```
 ---
 
