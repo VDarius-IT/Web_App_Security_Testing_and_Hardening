@@ -59,63 +59,40 @@ The architecture is designed for automated resilience. The primary components wo
 
 ```mermaid
 graph TD
-    subgraph "User's Device"
-        U[VPN Client]
-    end
+    %% === Nodes ===
+    U[VPN Client] --> R53[Route 53 DNS<br>Endpoint]
+    
+    R53 --> EIP[Elastic IP Address]
+    
+    EIP --> P_EC2[EC2 Instance: VPN Server<br><i>Primary (AZ A)</i>]
+    EIP -.-> S_EC2[EC2 Instance: VPN Server<br><i>Standby (AZ B)</i>]
+    
+    P_EC2 --> VPC[VPC Resources<br>(e.g., Private Subnets)]
+    S_EC2 --> VPC
 
-    subgraph "AWS Cloud"
-        R53[Route 53 DNS Endpoint]
+    %% === Failover Logic ===
+    CW[CloudWatch Alarm<br>Monitor Primary] --> L[Lambda Function<br>Re-associate EIP]
+    L -->|Disassociate from Primary| P_EC2
+    L -->|Associate to Standby| S_EC2
 
-        subgraph "Availability Zone A"
-            subgraph "Primary Gateway"
-                P_EC2[EC2 Instance: VPN Server]
-                EIP[Elastic IP Address]
-            end
-        end
-
-        subgraph "Availability Zone B"
-            subgraph "Standby Gateway"
-                 S_EC2[EC2 Instance: VPN Server]
-            end
-        end
-
-        subgraph "Automated Failover Logic"
-            CW[CloudWatch Alarm: Monitor Primary]
-            L[Lambda Function: Re-associate EIP]
-        end
-
-        VPC[VPC Resources <br/> e.g., Private Subnets]
-    end
-
-    %% --- Connections and Flows ---
-
-    %% Steady State Flow
-    U -- "1. Connects via vpn.yourcompany.com" --> R53
-    R53 -- "2. Resolves to Elastic IP" --> EIP
-    EIP -- "3. Associated with Primary" --> P_EC2
-    P_EC2 -- "4. Provides Secure Access" --> VPC
-
-    %% Failover Process
-    CW -- "1. Detects Primary EC2 Failure" --> L
-    L -- "2. Disassociates EIP from Primary" --> EIP
-    L -- "3. Associates EIP with Standby" --> S_EC2
-    S_EC2 -- "Becomes the new Primary" --> VPC
-
-    %% --- Styling ---
+    %% === Styling ===
     classDef primary fill:#d4edda,stroke:#155724,stroke-width:2px;
     classDef standby fill:#f8d7da,stroke:#721c24,stroke-width:2px;
-    class P_EC2 primary;
-    class S_EC2 standby;
+    classDef failover fill:#fff3cd,stroke:#856404,stroke-width:2px;
 
-    %% Link Styles (defined individually for compatibility)
-    linkStyle 0 stroke:green,stroke-width:2px;
-    linkStyle 1 stroke:green,stroke-width:2px;
-    linkStyle 2 stroke:green,stroke-width:2px;
-    linkStyle 3 stroke:green,stroke-width:2px;
-    linkStyle 4 stroke:red,stroke-width:2px,stroke-dasharray: 5 5;
-    linkStyle 5 stroke:orange,stroke-width:2px,stroke-dasharray: 5 5;
-    linkStyle 6 stroke:orange,stroke-width:2px,stroke-dasharray: 5 5;
-    linkStyle 7 stroke:green,stroke-width:2px,stroke-dasharray: 5 5;
+    class P_EC2 primary
+    class S_EC2 standby
+    class L,CW failover
+
+    %% === Link Styles (0-indexed in render order) ===
+    linkStyle 0 stroke:#0d6efd,stroke-width:2px;
+    linkStyle 1 stroke:#0d6efd,stroke-width:2px;
+    linkStyle 2 stroke:#0d6efd,stroke-width:2px;
+    linkStyle 3 stroke:#0d6efd,stroke-width:2px;
+    linkStyle 4 stroke:#0d6efd,stroke-width:2px;
+    linkStyle 5 stroke:#d39e00,stroke-width:2px,stroke-dasharray:5 5;
+    linkStyle 6 stroke:#d39e00,stroke-width:2px,stroke-dasharray:5 5;
+    linkStyle 7 stroke:#d39e00,stroke-width:2px,stroke-dasharray:5 5;
 ```
 ---
 
