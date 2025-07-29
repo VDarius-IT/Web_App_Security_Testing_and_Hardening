@@ -98,7 +98,7 @@ graph TD
     P_EC2 -- "4. Provides Secure Access" --> VPC
 
     %% Failover Process
-    CW -- "1. Detects Primary EC2 Failure" ==> L
+    CW -- "1. Detects Primary EC2 Failure" --> L
     L -- "2. Disassociates EIP from Primary" --> EIP
     L -- "3. Associates EIP with Standby" --> S_EC2
     S_EC2 -- "Becomes the new Primary"--> VPC
