@@ -89,11 +89,6 @@ graph TD
     linkStyle 6 stroke-width:2px,fill:none,stroke:orange,stroke-dasharray: 5 5;
     linkStyle 7 stroke-width:2px,fill:none,stroke:green,stroke-dasharray: 5 5;
 
-    %% --- Styling ---
-    classDef primary fill:#d4edda,stroke:#155724,stroke-width:2px;
-    classDef standby fill:#f8d7da,stroke:#721c24,stroke-width:2px;
-    class P_EC2 primary;
-    class S_EC2 standby;
 ```
 ---
 
