@@ -73,22 +73,10 @@ graph TD
         end
     end
 
-    L[Lambda Function] -- "1. Detects Failure" --> P_EC2
-    L -- "2. Releases EIP from Primary" --> EIP
-    L -- "3. Associates EIP with Standby" --> S_EC2
-    S_EC2 -- "Becomes the new Primary" --> VPC[VPC]
-
-    %% --- Link Styles ---
-    linkStyle 0 stroke-width:2px,fill:none,stroke:green;
-    linkStyle 1 stroke-width:2px,fill:none,stroke:green;
-    linkStyle 2 stroke-width:2px,fill:none,stroke:green;
-    linkStyle 3 stroke-width:2px,fill:none,stroke:green;
-
-    linkStyle 4 stroke-width:2px,fill:none,stroke:red,stroke-dasharray: 5 5;
-    linkStyle 5 stroke-width:2px,fill:none,stroke:orange,stroke-dasharray: 5 5;
-    linkStyle 6 stroke-width:2px,fill:none,stroke:orange,stroke-dasharray: 5 5;
-    linkStyle 7 stroke-width:2px,fill:none,stroke:green,stroke-dasharray: 5 5;
-
+    L[Lambda Function] -->|1. Detects Failure| P_EC2
+    L -->|2. Releases EIP from Primary| EIP
+    L -->|3. Associates EIP with Standby| S_EC2
+    S_EC2 -->|Becomes the new Primary| VPC[VPC]
 ```
 ---
 
