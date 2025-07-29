@@ -68,7 +68,6 @@ graph TD
 
         subgraph "Availability Zone A"
             subgraph "Primary Gateway"
-                style Primary fill:#d4edda,stroke:#155724
                 P_EC2[EC2 Instance: VPN Server]
                 EIP[Elastic IP Address]
             end
@@ -76,7 +75,6 @@ graph TD
 
         subgraph "Availability Zone B"
             subgraph "Standby Gateway"
-                 style Standby fill:#f8d7da,stroke:#721c24
                  S_EC2[EC2 Instance: VPN Server]
             end
         end
