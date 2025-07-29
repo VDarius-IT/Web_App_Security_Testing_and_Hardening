@@ -92,16 +92,16 @@ graph TD
     %% --- Verbindungen und Abläufe ---
 
     %% Normalbetrieb (Steady State)
-    U -- "1. Verbindung über vpn.ihrefirma.de" --> R53
-    R53 -- "2. Löst auf Elastische IP auf" --> EIP
-    EIP -- "3. Mit Primär-Instanz verbunden" --> P_EC2
-    P_EC2 -- "4. Stellt sicheren Zugriff bereit" --> VPC
+    U  --> R53
+    R53  --> EIP
+    EIP  --> P_EC2
+    P_EC2  --> VPC
 
     %% Failover-Prozess
-    CW -- "1. Erkennt Ausfall der Primär-Instanz" --> L
-    L -- "2. Trennt EIP von Primär-Instanz" --> EIP
-    L -- "3. Verbindet EIP mit Standby-Instanz" --> S_EC2
-    S_EC2 -- "Wird zum neuen Primär-Gateway" --> VPC
+    CW  --> L
+    L --> EIP
+    L  --> S_EC2
+    S_EC2  --> VPC
 
     %% --- Link-Stile ---
     %% Stile werden in der Reihenfolge der Links oben angewendet.
