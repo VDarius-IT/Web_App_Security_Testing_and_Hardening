@@ -68,7 +68,6 @@ graph TD
 
         subgraph "Availability Zone A"
             subgraph "Primary Gateway"
-                style Primary fill:#d4edda,stroke:#155724
                 P_EC2[EC2 Instance: VPN Server]
                 EIP[Elastic IP Address]
             end
@@ -76,7 +75,6 @@ graph TD
 
         subgraph "Availability Zone B"
             subgraph "Standby Gateway"
-                 style Standby fill:#f8d7da,stroke:#721c24
                  S_EC2[EC2 Instance: VPN Server]
             end
         end
@@ -103,20 +101,16 @@ graph TD
     L -- "3. Associates EIP with Standby" --> S_EC2
     S_EC2 -- "Becomes the new Primary" --> VPC
 
-    %% --- Link Styles ---
-    %% Styles are applied to links in the order they are defined above.
-    
-    %% Steady State Links (0-3): Green, Solid
-    linkStyle 0 stroke-width:2px,fill:none,stroke:green;
-    linkStyle 1 stroke-width:2px,fill:none,stroke:green;
-    linkStyle 2 stroke-width:2px,fill:none,stroke:green;
-    linkStyle 3 stroke-width:2px,fill:none,stroke:green;
+    %% --- Styling ---
+    classDef primary fill:#d4edda,stroke:#155724,stroke-width:2px;
+    classDef standby fill:#f8d7da,stroke:#721c24,stroke-width:2px;
+    class P_EC2 primary;
+    class S_EC2 standby;
 
-    %% Failover Links (4-7): Dashed, with appropriate colors
-    linkStyle 4 stroke-width:2px,fill:none,stroke:red,stroke-dasharray: 5 5;
-    linkStyle 5 stroke-width:2px,fill:none,stroke:orange,stroke-dasharray: 5 5;
-    linkStyle 6 stroke-width:2px,fill:none,stroke:orange,stroke-dasharray: 5 5;
-    linkStyle 7 stroke-width:2px,fill:none,stroke:green,stroke-dasharray: 5 5;
+    linkStyle 0,1,2,3 stroke:green,stroke-width:2px;
+    linkStyle 4 stroke:red,stroke-width:2px,stroke-dasharray: 5 5;
+    linkStyle 5,6 stroke:orange,stroke-width:2px,stroke-dasharray: 5 5;
+    linkStyle 7 stroke:green,stroke-width:2px,stroke-dasharray: 5 5;
 ```
 ---
 
