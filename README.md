@@ -107,9 +107,14 @@ graph TD
     class P_EC2 primary;
     class S_EC2 standby;
 
-    linkStyle 0,1,2,3 stroke:green,stroke-width:2px;
+    %% Link Styles (defined individually for compatibility)
+    linkStyle 0 stroke:green,stroke-width:2px;
+    linkStyle 1 stroke:green,stroke-width:2px;
+    linkStyle 2 stroke:green,stroke-width:2px;
+    linkStyle 3 stroke:green,stroke-width:2px;
     linkStyle 4 stroke:red,stroke-width:2px,stroke-dasharray: 5 5;
-    linkStyle 5,6 stroke:orange,stroke-width:2px,stroke-dasharray: 5 5;
+    linkStyle 5 stroke:orange,stroke-width:2px,stroke-dasharray: 5 5;
+    linkStyle 6 stroke:orange,stroke-width:2px,stroke-dasharray: 5 5;
     linkStyle 7 stroke:green,stroke-width:2px,stroke-dasharray: 5 5;
 ```
 ---
