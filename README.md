@@ -100,6 +100,18 @@ graph TD
     L  --> EIP
     L  --> S_EC2
     S_EC2 --> VPC
+    %% Links Normalbetrieb (0-3): Grün, Durchgezogen
+    linkStyle 0 stroke-width:2px,fill:none,stroke:green;
+    linkStyle 1 stroke-width:2px,fill:none,stroke:green;
+    linkStyle 2 stroke-width:2px,fill:none,stroke:green;
+    linkStyle 3 stroke-width:2px,fill:none,stroke:green;
+
+    %% Failover-Links (4-7): Gestrichelt, mit passenden Farben
+    linkStyle 4 stroke-width:2px,fill:none,stroke:red,stroke-dasharray: 5 5;
+    linkStyle 5 stroke-width:2px,fill:none,stroke:orange,stroke-dasharray: 5 5;
+    linkStyle 6 stroke-width:2px,fill:none,stroke:orange,stroke-dasharray: 5 5;
+    linkStyle 7 stroke-width:2px,fill:none,stroke:green,stroke-dasharray: 5 5;
+
 ```
 ---
 
