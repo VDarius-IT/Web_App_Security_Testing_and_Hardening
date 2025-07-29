@@ -59,24 +59,49 @@ The architecture is designed for automated resilience. The primary components wo
 
 ```mermaid
 graph TD
-
-    subgraph "Availability Zone A"
-        subgraph "Primary Gateway"
-            P_EC2[EC2 Instance: VPN Server]
-            EIP[Elastic IP Address]
-        end
+    subgraph "User's Device"
+        U[VPN Client]
     end
 
-    subgraph "Availability Zone B"
-        subgraph "Standby Gateway"
-            S_EC2[EC2 Instance: VPN Server]
+    subgraph "AWS Cloud"
+        R53[Route 53 DNS Endpoint]
+
+        subgraph "Availability Zone A"
+            subgraph "Primary Gateway"
+                style Primary fill:#d4edda,stroke:#155724
+                P_EC2[EC2 Instance: VPN Server]
+                EIP[Elastic IP Address]
+            end
         end
+
+        subgraph "Availability Zone B"
+            subgraph "Standby Gateway"
+                 style Standby fill:#f8d7da,stroke:#721c24
+                 S_EC2[EC2 Instance: VPN Server]
+            end
+        end
+
+        subgraph "Automated Failover Logic"
+            CW[CloudWatch Alarm: Monitor Primary]
+            L[Lambda Function: Re-associate EIP]
+        end
+
+        VPC[VPC Resources <br/> e.g., Private Subnets]
     end
 
-    L[Lambda Function] -->|1. Detects Failure| P_EC2
-    L -->|2. Releases EIP from Primary| EIP
-    L -->|3. Associates EIP with Standby| S_EC2
-    S_EC2 -->|Becomes the new Primary| VPC[VPC]
+    %% --- Connections and Flows ---
+
+    %% Steady State Flow
+    U -- "1. Connects via vpn.yourcompany.com" --> R53
+    R53 -- "2. Resolves to Elastic IP" --> EIP
+    EIP -- "3. Associated with Primary" --> P_EC2
+    P_EC2 -- "4. Provides Secure Access" --> VPC
+
+    %% Failover Process
+    CW -- "1. Detects Primary EC2 Failure" ==> L
+    L -- "2. Disassociates EIP from Primary" --> EIP
+    L -- "3. Associates EIP with Standby" --> S_EC2
+    S_EC2 -- "Becomes the new Primary"--> VPC
 ```
 ---
 
